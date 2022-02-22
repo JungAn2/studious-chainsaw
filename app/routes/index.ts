@@ -11,12 +11,13 @@ const router = express.Router();
 
 // Assign routes to our router
 router.get('/', IndexController.index);
+router.post('/login', IndexController.login);
 
 // authed example
-import AuthMiddleware from '../http/middleware/AuthMiddleware';
+//import AuthMiddleware from '../http/middleware/AuthMiddleware';
 // Everywhere below here will require authentication.
-router.use(AuthMiddleware);
-router.get('/auth', IndexController.index);
+//router.use(AuthMiddleware);
+//router.get('/auth', IndexController.index);
 
 // Export the router
 export default router;

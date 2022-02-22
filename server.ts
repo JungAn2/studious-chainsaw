@@ -7,6 +7,9 @@ const app = express();
 /** Import routers from ``app/routes/index`` **/
 import indexRouter from './app/routes/index';
 
+/** Allows use of json body */
+app.use(express.json());
+
 /** Configure application to use routers **/
 app.use('/', indexRouter);
 
