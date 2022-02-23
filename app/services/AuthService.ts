@@ -1,3 +1,5 @@
+import {jwt} from 'jsonwebtoken'
+
 /**
  * An example of an authorization service to validate authorization tokens, or attempt sign ins.
  */
@@ -13,5 +15,18 @@ export const AuthService = {
 			return true;
 		}
 		return false;
+	},
+	/**
+	 * 
+	 * @param password password of a user
+	 * @returns jwt token
+	 */
+	tokenGen({user}){
+		return new Promise((resolve, reject) => {
+			jwt.sign({user}, process.env.ACCESS_TOKEN, function(err, token2){
+				if(err) reject(err)
+				else resolve(token2)
+			})
+		})
 	}
 }
