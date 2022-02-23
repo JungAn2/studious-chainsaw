@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../../services/AuthService"
 import {PrismaClient} from '@prisma/client'
-import {jwt} from 'jsonwebtoken'
 
 const prisma = new PrismaClient()
 
@@ -15,10 +14,10 @@ export const UserController = {
     async login(req: Request, res: Response, next: NextFunction){
         const user = req.body
         if(!prisma.user.findFirst(req.body.email)){
-           return res.send("User not found")
+           return res.send("User or password not correct")
         }
         if((await prisma.user.findFirst(req.body.email)).password != user.password){
-            return res.send("User not found")
+            return res.send("User or password not correct")
         }
         const token = AuthService.tokenGen({user})
         res.json(token)

@@ -1,4 +1,4 @@
-import {jwt} from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 
 /**
  * An example of an authorization service to validate authorization tokens, or attempt sign ins.
@@ -22,11 +22,12 @@ export const AuthService = {
 	 * @returns jwt token
 	 */
 	tokenGen({user}){
-		return new Promise((resolve, reject) => {
+		return jwt.sign({user}, process.env.ACCESS_TOKEN)
+		/*return new Promise((resolve, reject) => {
 			jwt.sign({user}, process.env.ACCESS_TOKEN, function(err, token2){
 				if(err) reject(err)
 				else resolve(token2)
 			})
-		})
+		})*/
 	}
 }
