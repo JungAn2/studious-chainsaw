@@ -15,7 +15,7 @@ router.get('/', IndexController.index);
 
 router.get('/usr/', UserController.home)
 router.post('/usr/login', UserController.login);
-router.post('/usr/create', UserController.create);
+router.post('/usr/delete/:id', UserController.delete);
 
 // authed example
 //import AuthMiddleware from '../http/middleware/AuthMiddleware';

@@ -1,23 +1,19 @@
 import { Request, Response, NextFunction} from 'express'
-import {PrismaClient} from '@prisma/client'
+import {Prisma, PrismaClient} from '@prisma/client'
+import { json } from 'stream/consumers'
 
 const prisma = new PrismaClient()
 
 export const AuthController = {
+    /**
+     * 
+     * @param req request data
+     * @param res response
+     * @param next next function
+     * @returns 
+     */
     async register(req: Request, res: Response, next: NextFunction){
-        if(null == prisma.user.findFirst({
-            where: {
-                email: req.body.email,
-            }})
-            ){
-            return res.send("Email already registerd")
-            }
-        if(null == prisma.user.findUnique({
-            where: {
-                username: req.body.username
-            }})){
-            return res.send("Username already registerd")
-        }
+        /** Simple create user without validation */
         const user = await prisma.user.create({
             data: req.body
         })
