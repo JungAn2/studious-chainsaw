@@ -12,14 +12,21 @@ export const UserController = {
     },
 
     async login(req: Request, res: Response, next: NextFunction){
-        const user = req.body
-        if(!prisma.user.findFirst(req.body.email)){
-           return res.send("User or password not correct")
+        const user = prisma.user.findUnique({
+            where: {
+                email: req.body.email
+            }
+        })
+        if (user == null){
+            return res.send("Not registered")
         }
-        if((await prisma.user.findFirst(req.body.email)).password != user.password){
-            return res.send("User or password not correct")
-        }
-        const token = AuthService.tokenGen({user})
+        const token = await prisma.token.create({
+            data: {
+                token: AuthService.tokenGen(req.body),
+                tokenId: (await user).id
+            }
+        })
+
         res.json(token)
         return next()
     },

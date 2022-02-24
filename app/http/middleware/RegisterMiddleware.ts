@@ -3,7 +3,8 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export default async function({user}, res: Response){
+export default async function(req: Request, res: Response, next: NextFunction){
+    const user = req.body
     const email = await prisma.user.findUnique({
         where: {
             email: user.email
@@ -15,10 +16,9 @@ export default async function({user}, res: Response){
         }
     })
     if (email != null){
-        return res.sendStatus(400)
+        return res.send('Status(400)')
     }
     if (username != null){
         return res.send('Username already registerd')
     }
-    return user
 }
