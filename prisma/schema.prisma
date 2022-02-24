@@ -10,7 +10,6 @@ datasource db {
 model Todo{
   id  Int @id @default(autoincrement())
   createdAt DateTime  @default(now())
-  updatedAt DateTime @updatedAt
   tasks String
   fromProject Projects @relation(fields: [projectId], references: [id])
   projectId Int
@@ -20,9 +19,7 @@ model Todo{
 model Projects {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   title     String 
-  published Boolean  @default(false)
   todo  Todo[]
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
@@ -39,8 +36,8 @@ model Token {
 model User {
   id      Int      @id @default(autoincrement())
   email   String   @unique
+  username String   @unique
   password String
-  name    String?
   projects   Projects[]
   token Token[]
 }
