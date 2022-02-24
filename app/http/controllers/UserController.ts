@@ -6,11 +6,11 @@ const prisma = new PrismaClient()
 
 export const UserController = {
     
-    home(req, res, next){
+    home(req: Request, res: Response, next: NextFunction){
         res.send('this')
         return next()
     },
-
+    
     async login(req: Request, res: Response, next: NextFunction){
         const user = req.body
         if(!prisma.user.findFirst(req.body.email)){
