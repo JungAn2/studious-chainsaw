@@ -13,7 +13,22 @@ export const AuthController = {
      * @returns 
      */
     async register(req: Request, res: Response, next: NextFunction){
-        /** Simple create user without validation */
+ 
+        const email = await prisma.user.findUnique({
+            where: {
+                email: req.body.email
+            }
+
+        })
+        const username = await prisma.user.findUnique({
+            where: {
+                username: req.body.username
+            }
+        })
+        if(email != null || username != null){
+            return res.send('Email or username already registered')
+        }
+
         const user = await prisma.user.create({
             data: req.body
         })
