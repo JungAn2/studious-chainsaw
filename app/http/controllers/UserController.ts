@@ -10,7 +10,7 @@ export const UserController = {
         res.send('this')
         return next()
     },
-    
+
     async login(req: Request, res: Response, next: NextFunction){
         const user = req.body
         if(!prisma.user.findFirst(req.body.email)){
@@ -24,22 +24,32 @@ export const UserController = {
         return next()
     },
 
-    async create(req: Request, res: Response, next: NextFunction){
-        if(req.body == null){
-            return res.sendStatus(401)
+    async delete(req: Request, res: Response, next:NextFunction){
+        const id = req.params.id
+        const ss = prisma.user.findFirst({
+            where: {
+                id: Number(id)
+            },
+            select:{
+                id: true
+            }
+        })
+        return res.send()
+
+        if (prisma.user.findFirst({
+            where: {
+                id: Number(id)
+            }
+        })){
+            return res.send()
         }
-        if(prisma.user.findFirst(req.body.email) != null){
-            return res.send("User already registered")
-        }
-        const user = await prisma.user.create({
-            data: req.body
+
+        const user = await prisma.user.delete({
+            where:{
+                id: Number(id),
+            }
         })
         res.json(user)
-        return next()
-    },
-
-    async delete(req, res, next){
-        
         return next()
     }
 
