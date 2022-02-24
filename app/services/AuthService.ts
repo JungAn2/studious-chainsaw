@@ -1,4 +1,8 @@
+import { Prisma, PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken'
+import { json } from 'stream/consumers';
+
+const prisma = new PrismaClient()
 
 /**
  * An example of an authorization service to validate authorization tokens, or attempt sign ins.
@@ -29,5 +33,11 @@ export const AuthService = {
 				else resolve(token2)
 			})
 		})*/
+	},
+	async register({user}){
+		const insertUser = await prisma.user.create({
+			data: user
+		})
+		return insertUser
 	}
 }

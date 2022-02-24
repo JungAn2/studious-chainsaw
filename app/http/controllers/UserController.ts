@@ -26,30 +26,22 @@ export const UserController = {
 
     async delete(req: Request, res: Response, next:NextFunction){
         const id = req.params.id
-        const ss = prisma.user.findFirst({
+        const findUser = prisma.user.findUnique({
             where: {
                 id: Number(id)
-            },
-            select:{
-                id: true
             }
         })
-        return res.send()
 
-        if (prisma.user.findFirst({
-            where: {
-                id: Number(id)
-            }
-        })){
-            return res.send()
+        if(findUser == null){
+            return res.send('User not found')
         }
 
-        const user = await prisma.user.delete({
+        await prisma.user.delete({
             where:{
                 id: Number(id),
             }
         })
-        res.json(user)
+        res.json(findUser)
         return next()
     }
 
