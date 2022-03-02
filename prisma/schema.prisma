@@ -7,37 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Todo{
-  id  Int @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  tasks String
-  fromProject Projects @relation(fields: [projectId], references: [id])
-  projectId Int
+model Task{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  description String
+  project Project @relation(fields: [project_id], references: [id])
+  project_id Int
 }
 
-
-model Projects {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  title     String 
-  todo  Todo[]
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-}
-
-model Token {
+model Project {
   id  Int @id @default(autoincrement())
-  token String @unique
-  tokenUser  User  @relation(fields: [tokenId], references: [id])
-  tokenId Int
-  createdAt DateTime @default(now())
+  title String
+  user User @relation(fields: [user_id], references: [id])
+  user_id Int
+  task Task[]
 }
 
 model User {
   id      Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
   email   String   @unique
-  username String   @unique
-  password String
-  projects   Projects[]
-  token Token[]
+  username String  @unique
+  password String  
+  project Project[]
 }

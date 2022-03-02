@@ -8,7 +8,6 @@ async function generateUsers() {
     create: {
       email: 'alice@prisma.io',
       name: 'Alice',
-      password: 'Alice'
     },
   })
 
@@ -18,7 +17,6 @@ async function generateUsers() {
     create: {
       email: 'bob@prisma.io',
       name: 'Bob',
-      password: 'Bob'
     },
   })
 }
@@ -32,7 +30,7 @@ async function generatePosts() {
   });
 
   // Create post
-  await prisma.projects.create({
+  await prisma.post.create({
     data: {
       title: 'Hello world',
       content: 'A very interesitng blog',

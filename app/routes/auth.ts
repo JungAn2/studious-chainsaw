@@ -1,8 +1,14 @@
-import express from 'express'
-import { AuthController } from '../http/controllers/AuthController'
+// Import express
+import express from 'express';
+// Import AuthController
+import { AuthController } from '../http/controllers/AuthController';
 
-const router = express.Router()
+// Create a router instance for our nested routes.
+const router = express.Router();
 
-router.post('/register', AuthController.register)
+// Create a route for POST requests on /auth/register 
+router.post('/register', AuthController.register);
+router.post('/login', AuthController.login)
 
-export default router
+// Export the router
+export default router;
