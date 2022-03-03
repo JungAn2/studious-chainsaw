@@ -18,7 +18,7 @@ import taskRouter from './app/routes/task'
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/projects', projectRouter)
-app.use('/projects/:pid/tasks', taskRouter)
+app.use('/projects', taskRouter)
 
 /** Using a custom error handler */
 import ExceptionHandler from './app/exceptions/ExceptionHandler';

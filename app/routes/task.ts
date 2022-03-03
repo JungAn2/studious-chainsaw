@@ -5,9 +5,9 @@ import AuthMiddleware from '../http/middleware/AuthMiddleware'
 const router = express.Router()
 
 router.use(AuthMiddleware)
-router.get('/', TaskController.getTask)
-router.post('/create', TaskController.createTask)
-router.post('/delete/:id', TaskController.deleteTask)
-router.post('/update/:id', TaskController.updateTask)
+router.get('/:pid/tasks', TaskController.getTask)
+router.post('/:pid/tasks/create', TaskController.createTask)
+router.post('/:pid/tasks/delete/:id', TaskController.deleteTask)
+router.post('/:pid/tasks/update/:id', TaskController.updateTask)
 
 export default router
