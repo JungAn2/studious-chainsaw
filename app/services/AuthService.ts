@@ -28,10 +28,11 @@ export const AuthService = {
 			}
 	},
 
-	async findUser(payload: JwtPayload):Promise<User>{
+	async findUser(token):Promise<User>{
+		const decoded = jwt.decode(token, {json: true})
 		const user = await prisma.user.findUnique({
 			where: {
-				id: Number(payload.id)
+				id: Number(decoded.id)
 			}
 		})
 		return user
@@ -60,11 +61,12 @@ export const AuthService = {
 		}
 	} ,
 
-	async loginValidate(email, password):Promise<string | NotFoundException | InvalidCredentialException>{
+	async loginValidate(emailUser, password):Promise<string | NotFoundException | InvalidCredentialException>{
 		const user = await prisma.user.findFirst({
 			where:{
 				OR: [
-					{email: email}
+					{email: emailUser},
+					{username: emailUser}
 				]
 			}
 		})

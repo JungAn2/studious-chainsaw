@@ -3,20 +3,39 @@ import { AuthService } from "../../services/AuthService";
 import jwt from 'jsonwebtoken'
 import { config } from '../../../config'
 import { stringify } from "querystring";
+import { isStringObject } from "util/types";
 
 /**
  * Basic controller to handle requests on /
  */
 export const AuthController = {
 
+	/**
+	 * 
+	 * @param {Request} req Express request object
+	 * @param {Response} res Express response object
+	 * @param {NextFunction} next Express NextFunction (used for middleware)
+	 */
 	async login(req: Request, res: Response, next: NextFunction){
+		let data = null
 		if(!req.body.email){
-				res.send("No email")
+			if(!req.body.username){
+				res.send("No input")
 			}
+			data = req.body.username
+		}
+		else
+			data = req.body.email
 		if(!req.body.password)
 			res.send("No password")
-		const validate = await AuthService.loginValidate(req.body.email, req.body.password)
-		res.send(validate)
+		const validate = await AuthService.loginValidate(data, req.body.password)
+		//Sending if it is returning exception handler
+		if(!isStringObject(validate)){
+			res.send(validate)
+			return next()
+		}
+		//Send string if it is token string
+		res.send(String(validate))
 		return next();
 	},
 

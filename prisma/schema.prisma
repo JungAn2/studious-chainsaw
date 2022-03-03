@@ -10,6 +10,7 @@ datasource db {
 model Task{
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
   description String
   project Project @relation(fields: [project_id], references: [id])
   project_id Int
@@ -17,6 +18,8 @@ model Task{
 
 model Project {
   id  Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
   title String
   user User @relation(fields: [user_id], references: [id])
   user_id Int
@@ -26,6 +29,7 @@ model Project {
 model User {
   id      Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
   email   String   @unique
   username String  @unique
   password String  
