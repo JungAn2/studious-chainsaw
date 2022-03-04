@@ -18,14 +18,13 @@ export const AuthService = {
 	 * @param token Authorization token attached to the HTTP header.
 	 * @return {boolean} True if their token is valid, false if it isn't.
 	 */
-	validate(token: string):boolean|UnauthorizedException{
-			try{
-				jwt.verify(token, config.auth.ACCESS_TOKEN)
-				return true
-			}
-			catch(e){
-				return new UnauthorizedException()
-			}
+	validate(token: string):boolean{
+		try{
+			jwt.verify(token, config.auth.ACCESS_TOKEN)
+			return true
+		}catch(e){
+			return false
+		}
 	},
 
 	async findUser(token):Promise<User>{
@@ -38,6 +37,16 @@ export const AuthService = {
 		return user
 	},
 
+	async checkDuplicate(email:string):Promise<void>{
+		const user = await prisma.user.findFirst({
+			where: {
+				email
+			}
+		})
+		if(user == null)
+			return
+		throw new DuplicationException()
+	},
 	/**
 	 * Creates user object using Prisma ORM
 	 * @param email 
@@ -45,8 +54,8 @@ export const AuthService = {
 	 * @param password 
 	 * @returns user object 
 	 */
-	async register(email:string, username:string, password:string):Promise<User | DuplicationException> {
-		try{
+	async register(email:string, username:string, password:string):Promise<User> {
+		await this.checkDuplicate(email)
 		const user = await prisma.user.create({
 			data: {
 				email: email,
@@ -55,13 +64,9 @@ export const AuthService = {
 			}
 		  })
 		return user;
-		}
-		catch(e){
-			return new DuplicationException()
-		}
 	} ,
 
-	async loginValidate(emailUser, password):Promise<string | NotFoundException | InvalidCredentialException>{
+	async loginValidate(emailUser, password):Promise<string>{
 		const user = await prisma.user.findFirst({
 			where:{
 				OR: [
@@ -71,9 +76,10 @@ export const AuthService = {
 			}
 		})
 		if(user == null)
-			return new NotFoundException()
+			throw new NotFoundException()
+			
 		if(user.password != password)
-			return new InvalidCredentialException()
+			throw new DuplicationException()
 
 		const token = this.jwtGen(user)
 		return token

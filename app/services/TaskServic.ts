@@ -1,12 +1,13 @@
 import { PrismaClient, Task } from "@prisma/client"
 import NotFoundException from "../exceptions/NotFoundException"
+import UnauthorizedException from "../exceptions/UnauthorizedException"
 
 const prisma = new PrismaClient()
 
 export const TaskService = {
-    async getTasks(pid: string):Promise<Task [] | NotFoundException>{
+    async getTasks(pid: string):Promise<Task []>{
         if(!this.checkProjectExist(pid))
-            return new NotFoundException()
+            throw new NotFoundException()
         const task = await prisma.task.findMany({
             where: {
                 project_id: Number(pid)
@@ -15,9 +16,9 @@ export const TaskService = {
         return task
         
     },
-    async createTask(description: string, pid:string):Promise<Task | NotFoundException>{
+    async createTask(description: string, pid:string):Promise<Task>{
         if(!this.checkProjectExist(pid))
-            return new NotFoundException()
+            throw new NotFoundException()
         const task = await prisma.task.create({
             data: {
                 description,
@@ -27,11 +28,11 @@ export const TaskService = {
         return task
     },
 
-    async deleteTask(pid:string, id: string):Promise<Task | NotFoundException>{
+    async deleteTask(pid:string, id: string):Promise<Task>{
         if(!this.checkProjectExist(pid))
-            return new NotFoundException()
+            throw new NotFoundException()
         if(!this.checkTaskExist(id))
-            return new NotFoundException()
+            throw new NotFoundException()
         const task = await prisma.task.delete({
             where:{
                 id: Number(id)
@@ -40,38 +41,34 @@ export const TaskService = {
         return task
     },
 
-    async updateDescription(description: string, pid: string, id: string): Promise<Task | NotFoundException>{
-        var dateTime = new Date()
+    async updateDescription(description: string, pid: string, id: string): Promise<Task>{
         if(!this.checkProjectExist(pid))
-            return new NotFoundException()
+            throw new NotFoundException()
         if(!this.checkTaskExist(id))
-            return new NotFoundException()
+            throw new NotFoundException()
         const task = await prisma.task.update({
             where: {
                 id: Number(id)
             },
             data:{
                 description,
-                updatedAt: dateTime
                 
             }
         })
         return task
     },
 
-    async updateComplete(completed: boolean, pid: string, id: string): Promise<Task | NotFoundException>{
-        var dateTime = new Date()
+    async updateComplete(completed: boolean, pid: string, id: string): Promise<Task>{
         if(!this.checkProjectExist(pid))
-            return new NotFoundException()
+            throw new NotFoundException()
         if(!this.checkTaskExist(id))
-            return new NotFoundException()
+            throw new NotFoundException()
         const task = await prisma.task.update({
             where: {
                 id: Number(id)
             },
             data:{
                 completed,
-                updatedAt: dateTime
             }
         })
         return task

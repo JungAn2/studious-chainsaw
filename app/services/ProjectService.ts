@@ -1,5 +1,6 @@
 import { PrismaClient, Project } from "@prisma/client"
 import NotFoundException from "../exceptions/NotFoundException"
+import UnauthorizedException from "../exceptions/UnauthorizedException"
 
 const prisma = new PrismaClient()
 
@@ -21,10 +22,10 @@ export const ProjectService = {
         })
         return project
     },
-    async deleteProject(pid: string): Promise<Project | NotFoundException>{
+    async deleteProject(pid: string): Promise<Project>{
         const exist = await this.findProject(pid)
         if(exist == null)
-            return new NotFoundException()
+            throw new NotFoundException()
         const project = await prisma.project.delete({
             where: {
                 id: Number(pid)
@@ -32,18 +33,16 @@ export const ProjectService = {
         })
         return project
     },
-    async updateProject(title: string, pid: string): Promise<Project | NotFoundException>{
-        var dateTime = new Date()
+    async updateProject(title: string, pid: string): Promise<Project>{
         const exist = await this.findProject(pid)
         if(exist==null)
-            return new NotFoundException()
+            throw new NotFoundException()
         const project = await prisma.project.update({
             where: {
                 id: Number(pid)
             },
             data:{
                 title,
-                updatedAt: dateTime
             }
         })
         return project
@@ -56,5 +55,14 @@ export const ProjectService = {
             }
         })
         return project
+    },
+    async checkPermission(id: string, uid: number):Promise<void>{
+        const project = await prisma.project.findFirst({
+            where: {
+                id: Number(id)
+            }
+        })
+        if(project.user_id != uid)
+            throw new UnauthorizedException()
     },
 }

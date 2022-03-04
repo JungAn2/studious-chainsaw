@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../../services/AuthService";
-import jwt from 'jsonwebtoken'
-import { config } from '../../../config'
-import { stringify } from "querystring";
-import { isStringObject } from "util/types";
+import AuthExceptionHandler from "../../exceptions/Auth/Index";
+import MissingBodyException from "../../exceptions/MissingBodyException";
 
 /**
  * Basic controller to handle requests on /
@@ -11,50 +9,52 @@ import { isStringObject } from "util/types";
 export const AuthController = {
 
 	/**
+	 * Handles the default request on /register
 	 * 
 	 * @param {Request} req Express request object
 	 * @param {Response} res Express response object
 	 * @param {NextFunction} next Express NextFunction (used for middleware)
 	 */
-	async login(req: Request, res: Response, next: NextFunction){
-		let data = null
-		if(!req.body.email){
-			if(!req.body.username){
-				res.send("No input")
+	async login(req: Request, res: Response, next: NextFunction) {
+		try {
+			if (!req.body.email && !req.body.username) {
+				throw new MissingBodyException()
 			}
-			data = req.body.username
+			let userEmail = req.body.email
+			if (!userEmail)
+				userEmail = req.body.username
+			if (!req.body.password)
+				throw new MissingBodyException()
+			const token = await AuthService.loginValidate(userEmail, req.body.password)
+			console.log(token)
+			res.send(token)
+			return next();
 		}
-		else
-			data = req.body.email
-		if(!req.body.password)
-			res.send("No password")
-		const validate = await AuthService.loginValidate(data, req.body.password)
-		//Sending if it is returning exception handler
-		if(!isStringObject(validate)){
-			res.send(validate)
-			return next()
+		catch (e) {
+			return next(e)
 		}
-		//Send string if it is token string
-		res.send(String(validate))
-		return next();
 	},
-
-		/**
-	 * Handles the default request on /
+	/**
+	 * Handles the default request on /register
 	 * 
 	 * @param req {Request} Express request object
 	 * @param res {Response} Express response object
 	 * @param next {NextFunction} Express NextFunction (used for middleware)
 	 */
-		 async register(req: Request, res: Response, next: NextFunction) {
-			if(!req.body.email ||
+	async register(req: Request, res: Response, next: NextFunction) {
+		try {
+			if (!req.body.email ||
 				!req.body.username ||
-				!req.body.password){
-					res.send("Invalid input")
-				}
+				!req.body.password) {
+				throw new MissingBodyException()
+			}
 			const newUser = await AuthService.register(req.body.email, req.body.username, req.body.password);
-			res.send(newUser)
-			return next();
-		} ,
-	
+			return (AuthController.login(req, res, next));
+		}
+
+		catch (e) {
+			return next(e)
+		}
+	},
+
 }
