@@ -7,7 +7,7 @@ import taskRouter from './task'
 const router = express.Router()
 
 router.use(AuthMiddleware)
-router.get('/', ProjectController.get)
+router.get('/index', ProjectController.get)
 router.post('/create', ProjectController.create)
 router.post('/:id/delete', ProjectController.delete)
 router.post('/:id/update', ProjectController.update)
